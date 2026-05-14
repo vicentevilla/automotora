@@ -2,6 +2,7 @@ package com.mcqueen.automotora.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +17,7 @@ public class TipoVehiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 50, message = "La descripción no puede tener más de 50 caracteres")
+    @Size(max = 30)
     @Column(nullable = false, unique = true, length = 50)
     private String descripcion;
 
