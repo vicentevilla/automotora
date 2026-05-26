@@ -1,4 +1,4 @@
-package com.mcqueen.automotora.DTO;
+package com.mcqueen.automotora.dto;
 
 import java.math.BigDecimal;
 
