@@ -1,7 +1,7 @@
 package com.mcqueen.automotora.service;
 
 import com.mcqueen.automotora.model.TipoVehiculo;
-import com.mcqueen.automotora.repository.TipoVehiculoRepository;
+import com.mcqueen.automotora.Repository.TipoVehiculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

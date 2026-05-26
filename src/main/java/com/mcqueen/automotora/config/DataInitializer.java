@@ -2,8 +2,8 @@ package com.mcqueen.automotora.config;
 
 import com.mcqueen.automotora.model.TipoVehiculo;
 import com.mcqueen.automotora.model.Vehiculo;
-import com.mcqueen.automotora.repository.TipoVehiculoRepository;
-import com.mcqueen.automotora.repository.VehiculoRepository;
+import com.mcqueen.automotora.Repository.TipoVehiculoRepository;
+import com.mcqueen.automotora.Repository.VehiculoRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

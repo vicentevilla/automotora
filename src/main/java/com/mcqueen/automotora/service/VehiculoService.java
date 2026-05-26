@@ -1,12 +1,12 @@
 package com.mcqueen.automotora.service;
 
 
-import com.mcqueen.automotora.dto.VehiculoResponseDTO;
-import com.mcqueen.automotora.dto.VehiculoRequestDTO;
+import com.mcqueen.automotora.DTO.VehiculoResponseDTO;
+import com.mcqueen.automotora.DTO.VehiculoRequestDTO;
 import com.mcqueen.automotora.model.Vehiculo;
 import com.mcqueen.automotora.model.TipoVehiculo;
-import com.mcqueen.automotora.repository.VehiculoRepository;
-import com.mcqueen.automotora.repository.TipoVehiculoRepository;
+import com.mcqueen.automotora.Repository.VehiculoRepository;
+import com.mcqueen.automotora.Repository.TipoVehiculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

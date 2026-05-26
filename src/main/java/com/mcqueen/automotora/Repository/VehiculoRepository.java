@@ -1,4 +1,4 @@
-package com.mcqueen.automotora.repository;
+package com.mcqueen.automotora.Repository;
 
 import com.mcqueen.automotora.model.Vehiculo;
 
