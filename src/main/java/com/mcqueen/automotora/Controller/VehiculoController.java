@@ -59,8 +59,8 @@ public class VehiculoController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<List<VehiculoResponseDTO>> buscarPorMarca(@RequestParam String marca) {
+    @GetMapping("/buscar/{marca}")
+    public ResponseEntity<List<VehiculoResponseDTO>> buscarPorMarca(@PathVariable String marca) {
         return ResponseEntity.ok(vehiculoService.buscarPorMarca(marca));
     }
 
