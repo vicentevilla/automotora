@@ -21,6 +21,6 @@ public class TipoVehiculo {
     private String nombre;
 
     @Size(max = 100)
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true)
     private String descripcion;
 }
