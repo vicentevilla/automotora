@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
+
 
 import com.mcqueen.automotora.DTO.VehiculoRequestDTO;
 import com.mcqueen.automotora.DTO.VehiculoResponseDTO;
@@ -66,11 +65,7 @@ public class VehiculoController {
 
     @GetMapping("/anio-desde/{anio}")
     public ResponseEntity<List<VehiculoResponseDTO>> buscarPorAnioDesde(@PathVariable Integer anio){
-        List<VehiculoResponseDTO> vehiculos = vehiculoService.buscarPorAnioDesde(anio);
-        if(vehiculos.isEmpty()){
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(vehiculos);
+        return ResponseEntity.ok(vehiculoService.buscarPorAnioDesde(anio));
     }
 
     @GetMapping("/tipo/{tipoId}")

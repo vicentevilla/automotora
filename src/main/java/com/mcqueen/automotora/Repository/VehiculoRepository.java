@@ -16,7 +16,7 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>{
     @Query("SELECT v FROM Vehiculo v WHERE v.marca = ?1")
     List<Vehiculo> findByMarca(String marca);
     // Para buscar vehículos por año de fabricación.
-    @Query("SELECT v FROM Vehiculo v WHERE v.anio = ?1")
+    @Query("SELECT v FROM Vehiculo v WHERE v.anio >= ?1")
     List<Vehiculo> findByAnio(Integer anio);
     // Para buscar vehículos por tipo de vehículo.
     @Query("SELECT v FROM Vehiculo v WHERE v.tipoVehiculo.id = :tipoID")
