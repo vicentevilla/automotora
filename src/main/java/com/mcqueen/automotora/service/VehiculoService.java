@@ -9,6 +9,8 @@ import com.mcqueen.automotora.Repository.VehiculoRepository;
 import com.mcqueen.automotora.Repository.TipoVehiculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import com.mcqueen.automotora.Controller.VehiculoController;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,16 +25,36 @@ public class VehiculoService {
     private final TipoVehiculoRepository tipoVehiculoRepository;
 
     private VehiculoResponseDTO mapToDTO(Vehiculo vehiculo){
-        return new VehiculoResponseDTO(
-                vehiculo.getId(),
-                vehiculo.getPatente(),
-                vehiculo.getMarca(),
-                vehiculo.getModelo(),
-                vehiculo.getAnio(),
-                vehiculo.getPrecio(),
-                vehiculo.getTipoVehiculo().getNombre()
-        );
-    }
+
+    VehiculoResponseDTO dto =
+            new VehiculoResponseDTO(
+                    vehiculo.getId(),
+                    vehiculo.getPatente(),
+                    vehiculo.getMarca(),
+                    vehiculo.getModelo(),
+                    vehiculo.getAnio(),
+                    vehiculo.getPrecio(),
+                    vehiculo.getTipoVehiculo().getNombre()
+            );
+
+    dto.add(
+            linkTo(
+                    methodOn(VehiculoController.class)
+                            .obtenerPorId(
+                                    vehiculo.getId()
+                            )
+            ).withSelfRel()
+    );
+
+    dto.add(
+            linkTo(
+                    methodOn(VehiculoController.class)
+                            .obtenerTodos()
+            ).withRel("lista")
+    );
+
+    return dto;
+}
 
     public List<VehiculoResponseDTO> obtenerTodos() {
         return vehiculoRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
