@@ -17,7 +17,7 @@ spring:
         - id: tipovehiculo-route
           uri: http://localhost:8080
           predicates:
-            - Path=/tipovehiculos/**
+            - Path=/api/tipovehiculos/**
           filters:
             - AddRequestHeader=X-Gateway-Source, automotora-gateway
 
@@ -52,7 +52,7 @@ spring:
             - Path=/doc/**,/v3/api-docs/**,/swagger-ui/**
 
 server:
-  port: 8080
+  port: 8090
 
 management:
   endpoints:
