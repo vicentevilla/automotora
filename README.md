@@ -10,9 +10,9 @@ Proyecto Semestral — Arquitectura de Microservicios
 
 | Nombre | Rol |
 |--------|-----|
-| [Angel Aldea] | Backend / Microservicio principal |
-| [Vicente Villalobos] | Gateway / Despliegue |
-| [Michael ] | Tests / Documentación |
+| Angel Aldea | Backend / Microservicio principal |
+| Vicente Villalobos | Gateway / Despliegue |
+| Michael  | Tests / Documentación |
 
 ---
 
@@ -71,7 +71,7 @@ Todas las peticiones al Gateway en puerto `8090` se redirigen al microservicio e
 ## Requisitos previos
 
 - Java 21
-- Maven 3.9+
+- Maven 3.3
 - MySQL 8.0 (o Docker)
 - Docker Desktop (para despliegue con contenedores)
 
