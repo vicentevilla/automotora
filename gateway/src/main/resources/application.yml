@@ -7,7 +7,7 @@ spring:
       routes:
         # ── Vehículos ─────────────────────────────────
         - id: vehiculos-route
-          uri: http://localhost:8080
+          uri: lb://automotora          # lb:// = load balancer via Eureka
           predicates:
             - Path=/api/vehiculos/**
           filters:
@@ -15,15 +15,15 @@ spring:
 
         # ── TipoVehiculo ──────────────────────────────
         - id: tipovehiculo-route
-          uri: http://localhost:8080
+          uri: lb://automotora
           predicates:
-            - Path=/api/tipovehiculos/**
+            - Path=/tipovehiculos/**
           filters:
             - AddRequestHeader=X-Gateway-Source, automotora-gateway
 
         # ── Clientes ──────────────────────────────────
         - id: clientes-route
-          uri: http://localhost:8080
+          uri: lb://automotora
           predicates:
             - Path=/api/clientes/**
           filters:
@@ -31,7 +31,7 @@ spring:
 
         # ── Vendedores ────────────────────────────────
         - id: vendedores-route
-          uri: http://localhost:8080
+          uri: lb://automotora
           predicates:
             - Path=/api/vendedores/**
           filters:
@@ -39,7 +39,7 @@ spring:
 
         # ── Ventas ────────────────────────────────────
         - id: ventas-route
-          uri: http://localhost:8080
+          uri: lb://automotora
           predicates:
             - Path=/api/ventas/**
           filters:
@@ -47,9 +47,19 @@ spring:
 
         # ── Swagger UI del microservicio ──────────────
         - id: swagger-route
-          uri: http://localhost:8080
+          uri: lb://automotora
           predicates:
             - Path=/doc/**,/v3/api-docs/**,/swagger-ui/**
+
+# Eureka Client — el Gateway se registra y consulta Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
 
 server:
   port: 8090
@@ -65,4 +75,4 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    "[org.springframework.cloud.gateway]": DEBUG

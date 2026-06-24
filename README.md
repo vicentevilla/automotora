@@ -129,7 +129,6 @@ Para detener:
 ```bash
 docker compose down
 ```
-
 Para detener y eliminar volúmenes (reset BD):
 ```bash
 docker compose down -v
@@ -139,14 +138,22 @@ docker compose down -v
 
 ##  Pruebas Unitarias
 
-Las pruebas están en `src/test/java/com/mcqueen/automotora/service/` y cubren:
+Las pruebas están en `src/test/java/com/mcqueen/automotora/` y siguen la estructura Given–When–Then.
 
-| Clase de Test | Servicio probado | Casos |
-|---------------|-----------------|-------|
-| `VehiculoServiceTest` | `VehiculoService` | obtenerTodos, obtenerPorId, guardar, patente duplicada, eliminar |
-| `VentaServiceTest` | `VentaService` | obtenerTodos, crear venta exitosa, vehículo ya vendido, anular |
-| `ClienteServiceTest` | `ClienteService` | obtenerTodos, obtenerPorId, guardar, RUT duplicado, actualizar, eliminar |
-| `VendedorServiceTest` | `VendedorService` | obtenerTodos, obtenerPorId, guardar, RUT duplicado, eliminar |
+### Tests de Service (`service/`)
+| Clase | Casos |
+|-------|-------|
+| `VehiculoServiceTest` | obtenerTodos, obtenerPorId, guardar, patente duplicada, eliminar |
+| `VentaServiceTest` | obtenerTodos, crear exitosa, vehículo ya vendido, anular |
+| `ClienteServiceTest` | obtenerTodos, obtenerPorId, guardar, RUT duplicado, actualizar, eliminar |
+| `VendedorServiceTest` | obtenerTodos, obtenerPorId, guardar, RUT duplicado, eliminar |
+
+### Tests de Controller (`controller/`) — con @WebMvcTest
+| Clase | Casos |
+|-------|-------|
+| `VehiculoControllerTest` | GET lista, GET por id, GET 404, POST crear, DELETE, DELETE 404 |
+| `ClienteControllerTest` | GET lista, GET por id, GET 404, POST crear, DELETE |
+| `VendedorControllerTest` | GET lista, GET por id, POST crear, DELETE |
 
 **Ejecutar todas las pruebas:**
 ```bash
@@ -158,7 +165,7 @@ Las pruebas están en `src/test/java/com/mcqueen/automotora/service/` y cubren:
 ## Estructura del Proyecto
 
 ```
-automotora-mejorado/
+automotora/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/mcqueen/automotora/
@@ -172,23 +179,18 @@ automotora-mejorado/
 │   │   │   └── exception/          # GlobalExceptionHandler
 │   │   └── resources/
 │   │       └── application.yml     # Configuración con perfiles
-│   └── test/
-│       └── java/com/mcqueen/automotora/service/
-│           ├── VehiculoServiceTest.java
-│           ├── VentaServiceTest.java
-│           ├── ClienteServiceTest.java
-│           └── VendedorServiceTest.java
-├── gateway/                        # Módulo API Gateway
-│   ├── src/main/
-│   │   ├── java/com/mcqueen/gateway/
-│   │   │   └── GatewayApplication.java
-│   │   └── resources/
-│   │       └── application.yml     # Rutas del Gateway
-│   ├── Dockerfile
+├── src/test/java/com/mcqueen/automotora/
+│   ├── service/                # Tests de lógica de negocio
+│   └── controller/             # Tests de endpoints HTTP (@WebMvcTest)
+├── eureka-server/              # Service Discovery
+│   ├── src/main/resources/application.yml
+│   └── pom.xml
+├── gateway/                    # API Gateway (usa lb:// con Eureka)
+│   ├── src/main/resources/application.yml
 │   └── pom.xml
 ├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
+├── docker-compose.yml          # MySQL + Eureka + Automotora + Gateway
+└── pom.xml
 └── README.md
 ```
 
