@@ -63,7 +63,7 @@ Todas las peticiones al Gateway en puerto `8090` se redirigen al microservicio e
 | Entorno | URL |
 |---------|-----|
 | Local (directo) | http://localhost:8080/doc/swagger-ui.html |
-| Local (vía Gateway) | http://localhost:8090/doc/swagger-ui.html |
+| Local (vía Gateway) | http://localhost:8080/doc/swagger-ui.html |
 | API Docs JSON | http://localhost:8080/v3/api-docs |
 
 ---
