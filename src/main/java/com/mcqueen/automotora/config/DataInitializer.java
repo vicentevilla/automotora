@@ -31,7 +31,7 @@ public class DataInitializer implements CommandLineRunner {
 
         Vehiculo v1 = vehiculoRepository.save(new Vehiculo(null, "AB1234", "Toyota",    "Corolla",  2020, new BigDecimal("15000000"), sedan));
         Vehiculo v2 = vehiculoRepository.save(new Vehiculo(null, "CD5678", "Honda",     "CR-V",     2021, new BigDecimal("22000000"), suv));
-        Vehiculo v3 = vehiculoRepository.save(new Vehiculo(null, "EF9012", "Ford",      "Ranger",   2019, new BigDecimal("18500000"), camion));
+        vehiculoRepository.save(new Vehiculo(null, "EF9012", "Ford",      "Ranger",   2019, new BigDecimal("18500000"), camion));
         vehiculoRepository.save(new Vehiculo(null, "GH3456", "Chevrolet", "Spark",    2022, new BigDecimal("9800000"),  sedan));
         vehiculoRepository.save(new Vehiculo(null, "IJ7890", "Nissan",    "Frontier", 2023, new BigDecimal("25000000"), camion));
 
