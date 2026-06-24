@@ -18,7 +18,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
+        formatsql: true
 
 server:
   port: 8080
@@ -42,5 +42,5 @@ management:
 
 logging:
   level:
-    com.mcqueen.automotora: DEBUG
-    org.springframework.web: INFO
+    "[com.mcqueen.automotora]": debug
+    "[org.springframework.web]": info
