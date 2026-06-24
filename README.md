@@ -30,6 +30,7 @@ La arquitectura está basada en microservicios con Spring Boot, comunicados a tr
 |---------------|--------|-------------|
 | **automotora** (microservicio principal) | `8080` | Gestión de vehículos, tipos, clientes, vendedores y ventas |
 | **gateway** | `8090` | API Gateway que centraliza el enrutamiento |
+| **eureka-server** | `8761` | Service Discovery — registro y descubrimiento de servicios |
 
 ### Entidades del microservicio principal
 
@@ -56,6 +57,9 @@ Todas las peticiones al Gateway en puerto `8090` se redirigen al microservicio e
 | `/api/ventas/**` | automotora:8080 |
 | `/doc/**` | automotora:8080 (Swagger UI) |
 
+ El Gateway usa `lb://automotora` (load balancer) — en lugar de tener la URL 
+ hardcodeada, le pregunta a Eureka en qué dirección está corriendo el microservicio.
+
 ---
 
 ## Documentación Swagger / OpenAPI
@@ -77,33 +81,35 @@ Todas las peticiones al Gateway en puerto `8090` se redirigen al microservicio e
 
 ---
 
-## Instrucciones de Ejecución Local
+## Instrucciones de Ejecución Local (desde el IDE)
 
-### Opción 1 — Desde el IDE (sin Docker)
+**Orden de arranque obligatorio:** Eureka → Automotora → Gateway
 
-**1. Configurar MySQL local:**
+**1. Base de datos MySQL:**
 ```sql
 CREATE DATABASE automotora;
 ```
 
-**2. Editar credenciales** en `src/main/resources/application.yml`:
-```yaml
-spring:
-  datasource:
-    username: root
-    password: tu_password
-```
-
-**3. Levantar el microservicio principal:**
+**2. Iniciar Eureka Server** (carpeta `eureka-server/`):
 ```bash
-cd automotora-mejorado
 ./mvnw spring-boot:run
 ```
+Verificar en: http://localhost:8761  
+Ahí aparece el panel web con los servicios registrados.
 
-**4. Levantar el Gateway (en otra terminal):**
+**3. Iniciar microservicio Automotora** (carpeta raíz):
 ```bash
-cd automotora-mejorado/gateway
 ./mvnw spring-boot:run
+```
+Al arrancar se registra automáticamente en Eureka.  
+Verificar Swagger: http://localhost:8080/doc/swagger-ui.html
+
+**4. Iniciar Gateway** (carpeta `gateway/`):
+```bash
+./mvnw spring-boot:run
+```
+El Gateway consulta a Eureka para encontrar el microservicio usando `lb://automotora`.  
+Acceso vía Gateway: http://localhost:8090/api/vehiculos
 ```
 
 **5. Acceder a Swagger UI:**
