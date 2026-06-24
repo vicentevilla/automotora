@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: gateway
+
+  cloud:
+    gateway:
+      routes:
+        # ── Vehículos ─────────────────────────────────
+        - id: vehiculos-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/vehiculos/**
+          filters:
+            - AddRequestHeader=X-Gateway-Source, automotora-gateway
+
+        # ── TipoVehiculo ──────────────────────────────
+        - id: tipovehiculo-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/tipovehiculos/**
+          filters:
+            - AddRequestHeader=X-Gateway-Source, automotora-gateway
+
+        # ── Clientes ──────────────────────────────────
+        - id: clientes-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/clientes/**
+          filters:
+            - AddRequestHeader=X-Gateway-Source, automotora-gateway
+
+        # ── Vendedores ────────────────────────────────
+        - id: vendedores-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/vendedores/**
+          filters:
+            - AddRequestHeader=X-Gateway-Source, automotora-gateway
+
+        # ── Ventas ────────────────────────────────────
+        - id: ventas-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/ventas/**
+          filters:
+            - AddRequestHeader=X-Gateway-Source, automotora-gateway
+
+        # ── Swagger UI del microservicio ──────────────
+        - id: swagger-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/doc/**,/v3/api-docs/**,/swagger-ui/**
+
+server:
+  port: 8090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

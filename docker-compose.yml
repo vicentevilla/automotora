@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  # ── Base de datos MySQL ────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: automotora-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: automotora
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Microservicio principal Automotora ─────────────
+  automotora:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: automotora-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/automotora?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ── API Gateway ────────────────────────────────────
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: automotora-gateway
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://automotora:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://automotora:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://automotora:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://automotora:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_4_URI: http://automotora:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_5_URI: http://automotora:8080
+    depends_on:
+      - automotora
+
+volumes:
+  mysql_data:
