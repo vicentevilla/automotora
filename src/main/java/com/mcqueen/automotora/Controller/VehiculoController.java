@@ -1,21 +1,19 @@
 package com.mcqueen.automotora.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.mcqueen.automotora.DTO.VehiculoRequestDTO;
 import com.mcqueen.automotora.DTO.VehiculoResponseDTO;
+import com.mcqueen.automotora.assembler.VehiculoModelAssembler;
 import com.mcqueen.automotora.service.VehiculoService;
-
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,66 +25,66 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/vehiculos")
 @RequiredArgsConstructor
-
 @Tag(name = "Vehiculo", description = "Gestión de vehículos de la concesionaria")
-
 public class VehiculoController {
 
     private final VehiculoService vehiculoService;
-
+    private final VehiculoModelAssembler assembler;
 
     @Operation(summary = "Listar vehículos", description = "Retorna todos los vehículos registrados")
     @ApiResponse(responseCode = "200", description = "Lista obtenida correctamente")
+    @GetMapping
+    public ResponseEntity<CollectionModel<EntityModel<VehiculoResponseDTO>>> obtenerTodos() {
+        List<EntityModel<VehiculoResponseDTO>> vehiculos = vehiculoService.obtenerTodos()
+                .stream().map(assembler::toModel).collect(Collectors.toList());
 
-    @GetMapping 
-    public ResponseEntity<List<VehiculoResponseDTO>> obtenerTodos() {
-        return ResponseEntity.ok(vehiculoService.obtenerTodos());
+        return ResponseEntity.ok(CollectionModel.of(vehiculos,
+                linkTo(methodOn(VehiculoController.class).obtenerTodos()).withSelfRel()));
     }
 
-    @Operation(summary = "Buscar vehículo por ID", description = "Retorna un vehículo según su ID")
+    @Operation(summary = "Buscar vehículo por ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Vehículo encontrado"),
         @ApiResponse(responseCode = "404", description = "Vehículo no encontrado")
     })
-
     @GetMapping("/{id}")
-    public ResponseEntity<VehiculoResponseDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<VehiculoResponseDTO>> obtenerPorId(@PathVariable Long id) {
         return vehiculoService.obtenerPorId(id)
+                .map(assembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Crear vehículo", description = "Registra un nuevo vehículo. La patente debe ser única y tener 6 caracteres")
+    @Operation(summary = "Crear vehículo", description = "La patente debe ser única y tener 6 caracteres")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Vehículo creado correctamente"),
         @ApiResponse(responseCode = "400", description = "Datos inválidos o patente duplicada")
     })
-
     @PostMapping
-    public ResponseEntity<VehiculoResponseDTO> crear(@Valid @RequestBody VehiculoRequestDTO vehiculo) {
-        return ResponseEntity.status(201).body(vehiculoService.guardar(vehiculo));
-    } 
+    public ResponseEntity<EntityModel<VehiculoResponseDTO>> crear(@Valid @RequestBody VehiculoRequestDTO dto) {
+        EntityModel<VehiculoResponseDTO> model = assembler.toModel(vehiculoService.guardar(dto));
+        return ResponseEntity.status(201).body(model);
+    }
 
-    @Operation(summary = "Actualizar vehículo", description = "Actualiza los datos de un vehículo existente")
+    @Operation(summary = "Actualizar vehículo")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Vehículo actualizado correctamente"),
-        @ApiResponse(responseCode = "404", description = "Vehículo no encontrado"),
-        @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        @ApiResponse(responseCode = "404", description = "Vehículo no encontrado")
     })
-
     @PutMapping("/{id}")
-    public ResponseEntity<VehiculoResponseDTO> actualizar (@PathVariable Long id, @Valid @RequestBody VehiculoRequestDTO dto){
+    public ResponseEntity<EntityModel<VehiculoResponseDTO>> actualizar(@PathVariable Long id,
+            @Valid @RequestBody VehiculoRequestDTO dto) {
         return vehiculoService.actualizar(id, dto)
+                .map(assembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Eliminar vehículo", description = "Elimina un vehículo por su ID")
+    @Operation(summary = "Eliminar vehículo")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Vehículo eliminado correctamente"),
         @ApiResponse(responseCode = "404", description = "Vehículo no encontrado")
     })
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (vehiculoService.obtenerPorId(id).isEmpty()) return ResponseEntity.notFound().build();
@@ -94,34 +92,34 @@ public class VehiculoController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Buscar por marca", description = "Retorna vehículos filtrados por marca")
+    @Operation(summary = "Buscar por marca")
     @ApiResponse(responseCode = "200", description = "Lista filtrada correctamente")
-
     @GetMapping("/buscar/{marca}")
-    public ResponseEntity<List<VehiculoResponseDTO>> buscarPorMarca(@PathVariable String marca) {
-        return ResponseEntity.ok(vehiculoService.buscarPorMarca(marca));
+    public ResponseEntity<CollectionModel<EntityModel<VehiculoResponseDTO>>> buscarPorMarca(@PathVariable String marca) {
+        List<EntityModel<VehiculoResponseDTO>> vehiculos = vehiculoService.buscarPorMarca(marca)
+                .stream().map(assembler::toModel).collect(Collectors.toList());
+        return ResponseEntity.ok(CollectionModel.of(vehiculos,
+                linkTo(methodOn(VehiculoController.class).buscarPorMarca(marca)).withSelfRel()));
     }
 
-    @Operation(summary = "Buscar por año", description = "Retorna vehículos desde el año indicado en adelante")
+    @Operation(summary = "Buscar por año desde")
     @ApiResponse(responseCode = "200", description = "Lista filtrada correctamente")
-
     @GetMapping("/anio-desde/{anio}")
-    public ResponseEntity<List<VehiculoResponseDTO>> buscarPorAnioDesde(@PathVariable Integer anio){
-        return ResponseEntity.ok(vehiculoService.buscarPorAnioDesde(anio));
+    public ResponseEntity<CollectionModel<EntityModel<VehiculoResponseDTO>>> buscarPorAnioDesde(@PathVariable Integer anio) {
+        List<EntityModel<VehiculoResponseDTO>> vehiculos = vehiculoService.buscarPorAnioDesde(anio)
+                .stream().map(assembler::toModel).collect(Collectors.toList());
+        return ResponseEntity.ok(CollectionModel.of(vehiculos,
+                linkTo(methodOn(VehiculoController.class).buscarPorAnioDesde(anio)).withSelfRel()));
     }
 
-
-    @Operation(summary = "Buscar por tipo", description = "Retorna vehículos filtrados por tipo de vehículo")
+    @Operation(summary = "Buscar por tipo")
     @ApiResponse(responseCode = "200", description = "Lista filtrada correctamente")
-
     @GetMapping("/tipo/{tipoId}")
-    public ResponseEntity<List<VehiculoResponseDTO>> buscarPorTipo(@PathVariable Long tipoId) {
-        List<VehiculoResponseDTO> vehiculos = vehiculoService.buscarPorTipo(tipoId);
-        if (vehiculos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(vehiculos);
+    public ResponseEntity<CollectionModel<EntityModel<VehiculoResponseDTO>>> buscarPorTipo(@PathVariable Long tipoId) {
+        List<EntityModel<VehiculoResponseDTO>> vehiculos = vehiculoService.buscarPorTipo(tipoId)
+                .stream().map(assembler::toModel).collect(Collectors.toList());
+        if (vehiculos.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(CollectionModel.of(vehiculos,
+                linkTo(methodOn(VehiculoController.class).buscarPorTipo(tipoId)).withSelfRel()));
     }
-
-
 }
